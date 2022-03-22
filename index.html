@@ -1,0 +1,343 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Control PID con FIS tipo 2</title><meta name="generator" content="MATLAB 9.12"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-03-21"><meta name="DC.source" content="mamfist2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Control PID con FIS tipo 2</h1><!--introduction--><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Sistemas Neuro-difusos</a></li><li><a href="#2">Equipo</a></li><li><a href="#4">Declaraci&oacute;n de el sistema</a></li><li><a href="#6">Declaracion de las Entradas</a></li><li><a href="#7">funciones de membresia de la entrada</a></li><li><a href="#8">Salidas</a></li><li><a href="#9">Ajuste FOU</a></li><li><a href="#11">Gr&aacute;fica de las funciones de membresia</a></li><li><a href="#12">Reglas de control</a></li><li><a href="#13">Gr&aacute;fica de la supeficie de control</a></li><li><a href="#14">Dise&ntilde;o del controlador PID (para comparar)</a></li><li><a href="#15">Implementaci&oacute;n del controlador</a></li><li><a href="#17">Simulaci&oacute;n</a></li></ul></div><h2 id="1">Sistemas Neuro-difusos</h2><p>Reporte 03</p><h2 id="2">Equipo</h2><div><ul><li>Los difusos</li></ul></div><h2 id="4">Declaraci&oacute;n de el sistema</h2><pre class="codeinput"> fis2= sugfistype2( <span class="keyword">...</span>
+                   <span class="string">'NumInputs'</span>,2, <span class="keyword">...</span>
+                   <span class="string">'NumInputMFs'</span>,3,<span class="keyword">...</span>
+                   <span class="string">'NumOutputs'</span>,1,<span class="keyword">...</span>
+                   <span class="string">'NumOutputMFs'</span>,5,<span class="keyword">...</span>
+                   <span class="string">'MFType'</span>,<span class="string">'trimf'</span>,<span class="keyword">...</span>
+                   <span class="string">'AddRules'</span>,<span class="string">'allcombinations'</span>,<span class="keyword">...</span>
+                   <span class="string">'Name'</span>,<span class="string">'Fuzzy PID Control'</span>);
+ <span class="comment">% 2 entradas con 3 funciones de membresia cada entrada.</span>
+ <span class="comment">% 1 salida con 5 funciones de membresia</span>
+</pre><h2 id="6">Declaracion de las Entradas</h2><pre class="codeinput">fis2.Inputs(1).Name=<span class="string">"error"</span>;
+fis2.Inputs(2).Name=<span class="string">"De_error"</span>;
+fis2.Inputs(1).Range=[-1 1];
+fis2.Inputs(2).Range=[-1 1];
+</pre><h2 id="7">funciones de membresia de la entrada</h2><p>MF del error</p><pre class="codeinput">fis2.Inputs(1).MembershipFunctions(1).Name=<span class="string">'N'</span>;
+fis2.Inputs(1).MembershipFunctions(1).UpperParameters<span class="keyword">...</span>
+    =[-2 -1 0];
+
+fis2.Inputs(1).MembershipFunctions(2).Name=<span class="string">'Z'</span>;
+fis2.Inputs(1).MembershipFunctions(2).UpperParameters<span class="keyword">...</span>
+    =[-1 0 1];
+
+fis2.Inputs(1).MembershipFunctions(3).Name=<span class="string">'P'</span>;
+fis2.Inputs(1).MembershipFunctions(3).UpperParameters<span class="keyword">...</span>
+    =[0 1 2];
+<span class="comment">%MF de la derivada del error</span>
+fis2.Inputs(2).MembershipFunctions(1).Name=<span class="string">'N'</span>;
+fis2.Inputs(2).MembershipFunctions(1).UpperParameters<span class="keyword">...</span>
+    =[-2 -1 0];
+
+fis2.Inputs(2).MembershipFunctions(2).Name=<span class="string">'Z'</span>;
+fis2.Inputs(2).MembershipFunctions(2).UpperParameters<span class="keyword">...</span>
+    =[-1 0 1];
+
+fis2.Inputs(2).MembershipFunctions(3).Name=<span class="string">'P'</span>;
+fis2.Inputs(2).MembershipFunctions(3).UpperParameters<span class="keyword">...</span>
+    =[0 1 2];
+<span class="comment">%entradas</span>
+fis2.Inputs
+</pre><pre class="codeoutput">
+ans = 
+
+  1&times;2 fisvar array with properties:
+
+    Name
+    Range
+    MembershipFunctions
+
+  Details:
+            Name        Range      MembershipFunctions
+         __________    ________    ___________________
+
+    1    "error"       -1     1     {1&times;3 fismftype2}  
+    2    "De_error"    -1     1     {1&times;3 fismftype2}  
+
+</pre><h2 id="8">Salidas</h2><pre class="codeinput"><span class="comment">%se agregan las salidas como}</span>
+fis2.Outputs.Name=<span class="string">'U'</span>;
+fis2.Outputs(1).Range=[-1 1];
+fis2.Outputs(1).MembershipFunctions(1).Name=<span class="string">'NB'</span>;
+fis2.Outputs(1).MembershipFunctions(2).Name=<span class="string">'NM'</span>;
+fis2.Outputs(1).MembershipFunctions(3).Name=<span class="string">'Z'</span>;
+fis2.Outputs(1).MembershipFunctions(4).Name=<span class="string">'PM'</span>;
+fis2.Outputs(1).MembershipFunctions(5).Name=<span class="string">'PB'</span>;
+
+constantes=[-1 -0.5 0 0.5 1];
+<span class="keyword">for</span> i = 1:5
+    fis2.Outputs(1).MembershipFunctions(i).Parameters=constantes(i);
+<span class="keyword">end</span>
+fis2.Outputs(1).MembershipFunctions
+</pre><pre class="codeoutput">
+ans = 
+
+  1&times;5 fismf array with properties:
+
+    Type
+    Parameters
+    Name
+
+  Details:
+         Name       Type       Parameters
+         ____    __________    __________
+
+    1    "NB"    "constant"         -1   
+    2    "NM"    "constant"       -0.5   
+    3    "Z"     "constant"          0   
+    4    "PM"    "constant"        0.5   
+    5    "PB"    "constant"          1   
+
+</pre><h2 id="9">Ajuste FOU</h2><pre class="codeinput">scale = [0.2 0.9 0.2;0.3 0.9 0.3];
+<span class="keyword">for</span> i = 1:length(fis2.Inputs)
+    <span class="keyword">for</span> j = 1:length(fis2.Inputs(i).MembershipFunctions)
+        fis2.Inputs(i).MembershipFunctions(j).LowerLag = 0;
+        fis2.Inputs(i).MembershipFunctions(j).LowerScale = scale(i,j);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><h2 id="11">Gr&aacute;fica de las funciones de membresia</h2><pre class="codeinput">figure
+subplot(1,2,1)
+plotmf(fis2,<span class="string">'input'</span>,1)
+title(<span class="string">'Input 1'</span>)
+subplot(1,2,2)
+plotmf(fis2,<span class="string">'input'</span>,2)
+title(<span class="string">'Input 2'</span>)
+</pre><img vspace="5" hspace="5" src="mamfist2_01.png" alt=""> <h2 id="12">Reglas de control</h2><p>se crea un vector de reglas</p><pre class="codeinput">reglas=[<span class="keyword">...</span>
+    <span class="string">"error==N &amp; De_error==N =&gt; U=NB"</span>; <span class="keyword">...</span>
+    <span class="string">"error==Z &amp; De_error==N =&gt; U=NM"</span>; <span class="keyword">...</span>
+    <span class="string">"error==P &amp; De_error==N =&gt; U=Z"</span>; <span class="keyword">...</span>
+    <span class="string">"error==N &amp; De_error==Z =&gt; U=NM"</span>; <span class="keyword">...</span>
+    <span class="string">"error==Z &amp; De_error==Z =&gt; U=Z"</span>; <span class="keyword">...</span>
+    <span class="string">"error==P &amp; De_error==Z =&gt; U=PM"</span>; <span class="keyword">...</span>
+    <span class="string">"error==N &amp; De_error==P =&gt; U=Z"</span>; <span class="keyword">...</span>
+    <span class="string">"error==Z &amp; De_error==P =&gt; U=PM"</span>; <span class="keyword">...</span>
+    <span class="string">"error==P &amp; De_error==P =&gt; U=PB"</span> <span class="keyword">...</span>
+    ];
+<span class="comment">% se asigna el vector al controlador</span>
+fis2=addRule(fis2,reglas);
+</pre><h2 id="13">Gr&aacute;fica de la supeficie de control</h2><pre class="codeinput">figure
+gensurf(fis2)
+title(<span class="string">'Control surface of FIS'</span>)
+<span class="comment">%fis2.Inputs(1).MembershipFunctions</span>
+</pre><img vspace="5" hspace="5" src="mamfist2_02.png" alt=""> <h2 id="14">Dise&ntilde;o del controlador PID (para comparar)</h2><p>parametros del sistema</p><pre class="codeinput">C = 0.5;
+L = 0.5;
+T = 0.5;
+G = tf(C,[T 1],<span class="string">'Outputdelay'</span>,L);
+<span class="comment">% declaraci&oacute;n del controlador</span>
+pidController = pidtune(G,<span class="string">'pidf'</span>);
+Ce = 1;
+<span class="comment">% parametros del PID</span>
+tauC = 0.2;
+Cd = min(T,L/2)*Ce;
+C0 = 1/(C*Ce*(tauC+L/2));
+C1 = max(T,L/2)*C0;
+</pre><h2 id="15">Implementaci&oacute;n del controlador</h2><p>no fue posible implementar el modelo</p><pre class="codeinput"><span class="comment">%model = 'comparepidcontrollers';</span>
+<span class="comment">%load_system(model)</span>
+</pre><h2 id="17">Simulaci&oacute;n</h2><pre class="codeinput"><span class="comment">%plotTitle = ['Nominal: C=' num2str(C) ', L='  num2str(L) ', T=' num2str(T)];</span>
+<span class="comment">%plotOutput(out1,plotTitle)</span>
+</pre><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2022a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Control PID con FIS tipo 2
+%% 
+%% Sistemas Neuro-difusos
+% Reporte 03
+%% Equipo
+% 
+% * Los difusos
+%
+
+%% 
+%% Declaración de el sistema
+ fis2= sugfistype2( ...  
+                   'NumInputs',2, ...
+                   'NumInputMFs',3,...
+                   'NumOutputs',1,...
+                   'NumOutputMFs',5,...
+                   'MFType','trimf',...
+                   'AddRules','allcombinations',...
+                   'Name','Fuzzy PID Control');
+ % 2 entradas con 3 funciones de membresia cada entrada.
+ % 1 salida con 5 funciones de membresia
+%%
+%% Declaracion de las Entradas
+fis2.Inputs(1).Name="error";
+fis2.Inputs(2).Name="De_error";
+fis2.Inputs(1).Range=[-1 1];
+fis2.Inputs(2).Range=[-1 1];
+
+%% funciones de membresia de la entrada
+% MF del error
+fis2.Inputs(1).MembershipFunctions(1).Name='N';
+fis2.Inputs(1).MembershipFunctions(1).UpperParameters...
+    =[-2 -1 0];
+
+fis2.Inputs(1).MembershipFunctions(2).Name='Z';
+fis2.Inputs(1).MembershipFunctions(2).UpperParameters...
+    =[-1 0 1];
+
+fis2.Inputs(1).MembershipFunctions(3).Name='P';
+fis2.Inputs(1).MembershipFunctions(3).UpperParameters...
+    =[0 1 2];
+%MF de la derivada del error
+fis2.Inputs(2).MembershipFunctions(1).Name='N';
+fis2.Inputs(2).MembershipFunctions(1).UpperParameters...
+    =[-2 -1 0];
+
+fis2.Inputs(2).MembershipFunctions(2).Name='Z';
+fis2.Inputs(2).MembershipFunctions(2).UpperParameters...
+    =[-1 0 1];
+
+fis2.Inputs(2).MembershipFunctions(3).Name='P';
+fis2.Inputs(2).MembershipFunctions(3).UpperParameters...
+    =[0 1 2];
+%entradas
+fis2.Inputs
+%% Salidas
+%se agregan las salidas como}
+fis2.Outputs.Name='U';
+fis2.Outputs(1).Range=[-1 1];
+fis2.Outputs(1).MembershipFunctions(1).Name='NB';
+fis2.Outputs(1).MembershipFunctions(2).Name='NM';
+fis2.Outputs(1).MembershipFunctions(3).Name='Z';
+fis2.Outputs(1).MembershipFunctions(4).Name='PM';
+fis2.Outputs(1).MembershipFunctions(5).Name='PB';
+
+constantes=[-1 -0.5 0 0.5 1];
+for i = 1:5
+    fis2.Outputs(1).MembershipFunctions(i).Parameters=constantes(i);
+end
+fis2.Outputs(1).MembershipFunctions
+%% Ajuste FOU
+scale = [0.2 0.9 0.2;0.3 0.9 0.3];
+for i = 1:length(fis2.Inputs)
+    for j = 1:length(fis2.Inputs(i).MembershipFunctions)
+        fis2.Inputs(i).MembershipFunctions(j).LowerLag = 0;
+        fis2.Inputs(i).MembershipFunctions(j).LowerScale = scale(i,j);
+    end
+end
+%%
+%% Gráfica de las funciones de membresia 
+figure
+subplot(1,2,1)
+plotmf(fis2,'input',1)
+title('Input 1')
+subplot(1,2,2)
+plotmf(fis2,'input',2)
+title('Input 2')
+
+%% Reglas de control
+% se crea un vector de reglas
+reglas=[...
+    "error==N & De_error==N => U=NB"; ...
+    "error==Z & De_error==N => U=NM"; ...
+    "error==P & De_error==N => U=Z"; ...
+    "error==N & De_error==Z => U=NM"; ...
+    "error==Z & De_error==Z => U=Z"; ...
+    "error==P & De_error==Z => U=PM"; ...
+    "error==N & De_error==P => U=Z"; ...
+    "error==Z & De_error==P => U=PM"; ...
+    "error==P & De_error==P => U=PB" ...
+    ];
+% se asigna el vector al controlador
+fis2=addRule(fis2,reglas);
+%% Gráfica de la supeficie de control
+figure
+gensurf(fis2)
+title('Control surface of FIS')
+%fis2.Inputs(1).MembershipFunctions
+
+%% Diseño del controlador PID (para comparar)
+% parametros del sistema
+C = 0.5;
+L = 0.5;
+T = 0.5;
+G = tf(C,[T 1],'Outputdelay',L);
+% declaración del controlador
+pidController = pidtune(G,'pidf');
+Ce = 1;
+% parametros del PID
+tauC = 0.2;
+Cd = min(T,L/2)*Ce;
+C0 = 1/(C*Ce*(tauC+L/2));
+C1 = max(T,L/2)*C0;
+%% Implementación del controlador
+% no fue posible implementar el modelo
+%model = 'comparepidcontrollers';
+%load_system(model)
+%%
+%% Simulación
+% 
+
+%plotTitle = ['Nominal: C=' num2str(C) ', L='  num2str(L) ', T=' num2str(T)];
+%plotOutput(out1,plotTitle)
+
+
+##### SOURCE END #####
+--></body></html>
